@@ -39,7 +39,8 @@ def run_combinations(
     instance: InstanceData,
     constructives: Sequence[ConstructiveSpec],
     local_searches: Sequence[LocalSearchSpec],
-) -> list[ReportRow]:
+ ) -> list[ReportRow]:
+
     rows = []
 
     for constructive_name, constructive_fn in constructives:

@@ -102,3 +102,26 @@ def load_all_instances(instances_folder):
         loaded_instances.append(instance_data)
 
     return loaded_instances
+
+
+def load_named_instance(instances_folder, instance_name):
+    folder_path = Path(instances_folder)
+
+    if not folder_path.exists():
+        raise FileNotFoundError(f"Instances folder not found: {folder_path}")
+
+    if not folder_path.is_dir():
+        raise NotADirectoryError(f"Expected a folder, got: {folder_path}")
+
+    optimal_values = load_optimal_values(folder_path / "optimal.txt")
+
+    normalized_name = instance_name if instance_name.endswith(".txt") else f"{instance_name}.txt"
+    instance_path = folder_path / normalized_name
+
+    if not instance_path.exists():
+        raise FileNotFoundError(f"Instance file not found: {instance_path}")
+
+    if not instance_path.is_file():
+        raise ValueError(f"Expected an instance file, got: {instance_path}")
+
+    return load_instance(instance_path, optimal_values)
