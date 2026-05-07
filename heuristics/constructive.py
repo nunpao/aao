@@ -1,55 +1,56 @@
 import random
+from data.models import InstanceData, SolutionData
 
 
-def efficiency_greedy(n, W, v, w):
-    efficiency = [v[i] / w[i] for i in range(n)]
-    items = sorted(range(n), key = lambda i: efficiency[i], reverse=True)
+def efficiency_greedy(instance: InstanceData):
+    efficiency = [instance.values[i] / instance.weights[i] for i in range(instance.item_count)]
+    items = sorted(range(instance.item_count), key = lambda i: efficiency[i], reverse=True)
 
-    solution = [0] * n
+    solution = [0] * instance.item_count
     z = 0
     current_weight = 0
 
     for i in items:
-        if current_weight + w[i] <= W:
+        if current_weight + instance.weights[i] <= instance.capacity:
             solution[i] = 1
-            current_weight += w[i]
-            z += v[i]
+            current_weight += instance.weights[i]
+            z += instance.values[i]
 
-    return solution, z
+    return SolutionData(solution, z)
 
-def weight_greedy(n, W, v, w):
-    items = sorted(range(n), key = lambda i: w[i])
+def weight_greedy(instance: InstanceData):
+    items = sorted(range(instance.item_count), key = lambda i: instance.weights[i])
 
-    solution = [0] * n
+    solution = [0] * instance.item_count
     z = 0
     current_weight = 0
 
     for i in items:
-        if current_weight + w[i] > W:
+        if current_weight + instance.weights[i] > instance.capacity:
             break #se w[i] já não cabe, mais nenhum caberia, desta forma, acabamos com o ciclo aqui
 
         solution[i] = 1
-        current_weight += w[i]
-        z += v[i]
+        current_weight += instance.weights[i]
+        z += instance.values[i]
 
-    return solution, z
+    return SolutionData(solution, z)
 
 
-def random_greedy(n, W, v, w, alpha):
+def random_greedy(instance: InstanceData, alpha: float):
     if not 0 <= alpha <= 1:
         raise ValueError("alpha must be in [0, 1]")
 
     rng = random
 
-    efficiency = [v[i] / w[i] for i in range(n)]
-    candidates = sorted(range(n), key=lambda i: efficiency[i], reverse=True)
+    efficiency = [instance.values[i] / instance.weights[i] for i in range(instance.item_count)]
+    candidates = sorted(range(instance.item_count), key=lambda i: efficiency[i], reverse=True)
 
-    solution = [0] * n
+    solution = [0] * instance.item_count
     z = 0
     current_weight = 0
 
     while candidates:
-        feasible = [i for i in candidates if current_weight + w[i] <= W]
+        feasible = [i for i in candidates if current_weight + instance.weights[i] <= instance.capacity]
         if not feasible:
             break
 
@@ -60,8 +61,8 @@ def random_greedy(n, W, v, w, alpha):
 
         chosen = rng.choice(lrc)
         solution[chosen] = 1
-        current_weight += w[chosen]
-        z += v[chosen]
+        current_weight += instance.weights[chosen]
+        z += instance.values[chosen]
         candidates.remove(chosen)
 
-    return solution, z
+    return SolutionData(solution, z)
