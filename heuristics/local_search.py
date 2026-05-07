@@ -1,6 +1,10 @@
 from itertools import combinations
 
-from data.models import InstanceData, SolutionData
+from models import InstanceData, SolutionData
+
+
+def no_local_search(instance: InstanceData, initial_solution: SolutionData):
+    return SolutionData(initial_solution.solution.copy(), initial_solution.z)
 
 
 def one_exchange(instance: InstanceData, initial_solution: SolutionData):
@@ -78,4 +82,3 @@ def two_exchange(instance: InstanceData, initial_solution: SolutionData):
             if improved:
                 break
     return SolutionData (solution, z)
-

@@ -1,5 +1,5 @@
 import random
-from data.models import InstanceData, SolutionData
+from models import InstanceData, SolutionData
 
 
 def efficiency_greedy(instance: InstanceData):

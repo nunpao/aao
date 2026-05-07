@@ -1,5 +1,5 @@
 from pathlib import Path
-from data.models import *
+from models import InstanceData
 
 def load_optimal_values(optimal_file_path):
     optimal_file = Path(optimal_file_path)
