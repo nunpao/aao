@@ -1,15 +1,17 @@
 from itertools import combinations
 
+from data.models import InstanceData, SolutionData
 
-def one_exchange(n, W, v, w, initial_solution, initial_z):
 
-    solution = initial_solution.copy()
-    z = initial_z
+def one_exchange(instance: InstanceData, initial_solution: SolutionData):
 
-    current_weight = sum(w[i] for i in range(n) if solution[i] == 1)
+    solution = initial_solution.solution.copy()
+    z = initial_solution.z
 
-    s1 = {i for i in range(n) if solution[i] == 1}
-    s0 = {i for i in range(n) if solution[i] == 0}
+    current_weight = sum(instance.weights[i] for i in range(instance.item_count) if solution[i] == 1)
+
+    s1 = {i for i in range(instance.item_count) if solution[i] == 1}
+    s0 = {i for i in range(instance.item_count) if solution[i] == 0}
 
     improved = True
 
@@ -18,10 +20,10 @@ def one_exchange(n, W, v, w, initial_solution, initial_z):
 
         for i in list(s1):
             for j in list(s0):
-                new_weight = current_weight - w[i] + w[j]
-                delta_v = v[j] - v[i]
+                new_weight = current_weight - instance.weights[i] + instance.weights[j]
+                delta_v = instance.values[j] - instance.values[i]
 
-                if new_weight <= W and delta_v > 0:
+                if new_weight <= instance.capacity and delta_v > 0:
                     solution[i] = 0
                     solution[j] = 1
 
@@ -38,16 +40,16 @@ def one_exchange(n, W, v, w, initial_solution, initial_z):
             if improved:
                 break
 
-    return solution, z
+    return SolutionData (solution, z)
 
-def two_exchange(n, W, v, w, initial_solution, initial_z):
-    solution = initial_solution.copy()
-    z = initial_z
+def two_exchange(instance: InstanceData, initial_solution: SolutionData):
+    solution = initial_solution.solution.copy()
+    z = initial_solution.z
 
-    current_weight = sum(w[i] for i in range(n) if solution[i] == 1)
+    current_weight = sum(instance.weights[i] for i in range(instance.item_count) if solution[i] == 1)
 
-    s1 = {i for i in range(n) if solution[i] == 1}
-    s0 = {i for i in range(n) if solution[i] == 0}
+    s1 = {i for i in range(instance.item_count) if solution[i] == 1}
+    s0 = {i for i in range(instance.item_count) if solution[i] == 0}
 
     improved = True
 
@@ -55,10 +57,11 @@ def two_exchange(n, W, v, w, initial_solution, initial_z):
         improved = False
         for i1, i2 in combinations(list(s1), 2):
             for j1, j2 in combinations(list(s0), 2):
-                new_weight = current_weight - w[i1] - w[i2] + w[j1] + w[j2]
-                delta_v = v[j1] + v[j2] - v[i1] - v[i2]
+                new_weight = (current_weight - instance.weights[i1] - instance.weights[i2]
+                              + instance.weights[j1] + instance.weights[j2])
+                delta_v = instance.values[j1] + instance.values[j2] - instance.values[i1] - instance.values[i2]
 
-                if new_weight <= W and delta_v > 0:
+                if new_weight <= instance.capacity and delta_v > 0:
                     solution[i1] = solution[i2] = 0
                     solution[j1] = solution[j2] = 1
 
@@ -74,5 +77,5 @@ def two_exchange(n, W, v, w, initial_solution, initial_z):
                     break
             if improved:
                 break
-    return solution, z
+    return SolutionData (solution, z)
 
