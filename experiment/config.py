@@ -1,7 +1,7 @@
 from functools import partial
 
 from heuristics.constructive import efficiency_greedy, random_greedy, weight_greedy
-from heuristics.local_search import no_local_search, one_exchange, two_exchange
+from heuristics.local_search import no_local_search, one_exchange, two_exchange, limited_two_exchange
 from experiment.runner import ConstructiveSpec, LocalSearchSpec
 
 
@@ -19,6 +19,7 @@ def get_local_searches(include_two_exchange: bool = False) -> list[LocalSearchSp
     local_searches: list[LocalSearchSpec] = [
         ("", no_local_search),
         ("one_exchange", one_exchange),
+        ("limited_two_exchange_kin_100_kout_50", partial(limited_two_exchange, k_in=100, k_out=50)),
     ]
 
     if include_two_exchange:
