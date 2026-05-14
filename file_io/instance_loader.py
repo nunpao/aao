@@ -2,6 +2,9 @@ from pathlib import Path
 from models import InstanceData
 
 def load_optimal_values(optimal_file_path):
+    """
+    Reads the file containing the known optimal value for each instance.
+    """
     optimal_file = Path(optimal_file_path)
 
     if not optimal_file.exists():
@@ -9,6 +12,7 @@ def load_optimal_values(optimal_file_path):
 
     optimal_values = {}
 
+    # Each non-empty line must contain the instance stem and its optimal value.
     for line_number, line in enumerate(optimal_file.read_text().splitlines(), start=1):
         stripped_line = line.strip()
         if not stripped_line:
@@ -37,6 +41,9 @@ def load_optimal_values(optimal_file_path):
 
 
 def load_instance(instance_path, optimal_values):
+    """
+    Loads one knapsack instance and matches it with its optimal value.
+    """
     instance_file = Path(instance_path)
     lines = instance_file.read_text().splitlines()
 
@@ -51,6 +58,7 @@ def load_instance(instance_path, optimal_values):
     v = []
     w = []
 
+    # Reconstruct the aligned value and weight vectors while validating the input format.
     for expected_index, line in enumerate(item_lines):
         parts = line.split()
         if len(parts) != 3:
@@ -73,6 +81,9 @@ def load_instance(instance_path, optimal_values):
 
 
 def load_all_instances(instances_folder):
+    """
+    Loads every benchmark instance available in the given folder, skipping files that fail validation.
+    """
     folder_path = Path(instances_folder)
 
     if not folder_path.exists():
@@ -105,6 +116,9 @@ def load_all_instances(instances_folder):
 
 
 def load_named_instance(instances_folder, instance_name):
+    """
+    Loads a single instance selected by file name or stem.
+    """
     folder_path = Path(instances_folder)
 
     if not folder_path.exists():

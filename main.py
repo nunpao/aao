@@ -8,6 +8,13 @@ from experiment.runner import build_instance_report
 
 
 def parse_args() -> argparse.Namespace:
+    """
+    Parses the command-line options used to configure the experiment execution.
+
+    Returns:
+        argparse.Namespace:
+            Parsed arguments controlling the selected instance set and the optional inclusion of the full 2-exchange local search.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--include-two-exchange",
@@ -22,6 +29,17 @@ def parse_args() -> argparse.Namespace:
 
 
 def format_duration(seconds: float) -> str:
+    """
+    Converts a duration in seconds into a compact human-readable string.
+
+    Args:
+        seconds:
+            Elapsed time expressed in seconds.
+
+    Returns:
+        str:
+            Duration formatted as ``Xs``, ``YmZs``, or ``WhXmYs`` depending on its magnitude.
+    """
     total_seconds = int(seconds)
     hours, remainder = divmod(total_seconds, 3600)
     minutes, secs = divmod(remainder, 60)
@@ -36,9 +54,13 @@ def format_duration(seconds: float) -> str:
 
 
 def main():
+    """
+    Loads the requested instances, executes all configured heuristic combinations, and exports one CSV report per instance.
+    """
     total_start = perf_counter()
     args = parse_args()
 
+    # Load either one named instance or the full benchmark set.
     if args.instance:
         instances = [load_named_instance("instances", args.instance)]
     else:
@@ -51,6 +73,7 @@ def main():
     print(f"Using {len(constructives)} constructive heuristics and {len(local_searches)} local searches.")
 
     for instance in instances:
+        # Measure and report the end-to-end processing time for each instance independently.
         instance_start = perf_counter()
         report = build_instance_report(instance, constructives, local_searches)
         export_instance_report(report, "results/")
